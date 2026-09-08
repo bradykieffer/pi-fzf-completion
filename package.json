@@ -1,0 +1,37 @@
+{
+  "name": "pi-fzf-completion",
+  "version": "0.1.0",
+  "description": "Search pi autocomplete suggestions with fzf",
+  "type": "module",
+  "scripts": {
+    "lint": "prettier --write . && tsc --noEmit",
+    "test": "node --test test/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "pi-package",
+    "fzf",
+    "autocomplete"
+  ],
+  "license": "MIT",
+  "repository": "github:bradykieffer/pi-fzf-completion",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "^0.85.1",
+    "@earendil-works/pi-tui": "^0.85.1",
+    "@types/node": "^22.19.19",
+    "prettier": "^3.9.6",
+    "typescript": "^5.9.3"
+  },
+  "pi": {
+    "extensions": [
+      "./extensions/fzf-completion.ts"
+    ]
+  }
+}

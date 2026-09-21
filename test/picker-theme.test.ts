@@ -59,6 +59,8 @@ test("picker uses live theme colors and fits narrow terminals", async () => {
     } satisfies Partial<ExtensionContext["ui"]>,
   } as unknown as ExtensionContext;
   const api: Partial<ExtensionAPI> = {
+    registerFlag() {},
+    getFlag: () => false,
     registerShortcut: (_key, shortcut) => {
       open = shortcut.handler;
     },

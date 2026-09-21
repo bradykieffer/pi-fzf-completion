@@ -9,6 +9,7 @@ import {
 import {
   Input,
   SelectList,
+  matchesKey,
   truncateToWidth,
   type AutocompleteItem,
   type AutocompleteProvider,
@@ -269,6 +270,12 @@ export default function (pi: ExtensionAPI): void {
   let provider: AutocompleteProvider | undefined;
   let available = false;
 
+  pi.registerFlag("vim", {
+    description: "Use vim-style keys in the fzf completion picker",
+    type: "boolean",
+    default: false,
+  });
+
   pi.registerShortcut("ctrl+shift+r", {
     description: "Search current completions with fzf",
     async handler(ctx) {
@@ -301,6 +308,7 @@ export default function (pi: ExtensionAPI): void {
       );
       const initialQuery =
         parsePath(snapshot.suggestions.prefix, ctx.cwd)?.query ?? "";
+      const vim = pi.getFlag("vim") === true;
       const item = await ctx.ui.custom<AutocompleteItem | undefined>(
         (tui, theme, keybindings, done) => {
           const border = new DynamicBorder((text: string) =>
@@ -388,6 +396,12 @@ export default function (pi: ExtensionAPI): void {
               ].map((line) => truncateToWidth(line, width, ""));
             },
             handleInput(data: string) {
+              const vimKey = vimListKey(data, vim);
+              if (vimKey) {
+                list.handleInput(vimKey);
+                tui.requestRender();
+                return;
+              }
               if (keybindings.matches(data, "tui.select.cancel")) {
                 controller?.abort();
                 loadController.abort();
@@ -452,6 +466,17 @@ export default function (pi: ExtensionAPI): void {
       return current;
     });
   });
+}
+
+function vimListKey(data: string, enabled: boolean): string | undefined {
+  if (!enabled) return undefined;
+  if (matchesKey(data, "ctrl+j")) return "\x1b[B";
+  if (matchesKey(data, "ctrl+k")) return "\x1b[A";
+  if (matchesKey(data, "ctrl+u") || matchesKey(data, "ctrl+b"))
+    return "\x1b[5~";
+  if (matchesKey(data, "ctrl+d") || matchesKey(data, "ctrl+f"))
+    return "\x1b[6~";
+  return undefined;
 }
 
 function parsePath(prefix: string, cwd: string): ParsedPath | undefined {

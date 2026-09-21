@@ -17,3 +17,6 @@ make install
 ```
 
 if developing locally. Restart pi, type an `@` path or slash command, then press `Ctrl+Shift+R`.
+
+Pass `--vim` to use `Ctrl+J`/`Ctrl+K` for down/up and `Ctrl+U`/`Ctrl+D`
+for page navigation in the picker.
